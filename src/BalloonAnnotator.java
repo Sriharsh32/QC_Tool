@@ -9,12 +9,13 @@ import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-class BalloonAnnotatorFixed {
+class BalloonAnnotator{
     static class DimensionPosition {
         float x, y;
         String text;
@@ -69,8 +70,8 @@ class BalloonAnnotatorFixed {
 
         // Set up a transparent graphics state (to set the opacity)
         PDExtendedGraphicsState gs = new PDExtendedGraphicsState();
-        gs.setNonStrokingAlphaConstant(0.3f); // Fill opacity
-        gs.setStrokingAlphaConstant(0.4f);    // Stroke opacity
+        gs.setNonStrokingAlphaConstant(0.8f); // Fill opacity
+        gs.setStrokingAlphaConstant(0.8f);    // Stroke opacity
 
         var resources = page.getResources();
         if (resources == null) {
@@ -81,7 +82,6 @@ class BalloonAnnotatorFixed {
         COSName gsName = COSName.getPDFName("GS1");
         resources.getCOSObject().setItem(COSName.EXT_G_STATE, gs.getCOSObject());
         contentStream.setGraphicsStateParameters(gs);
-
 
         // Draw balloons
         for (DimensionPosition dim : dimensions) {
@@ -100,8 +100,7 @@ class BalloonAnnotatorFixed {
 
     private static void drawBalloon(PDPageContentStream contentStream, float x, float y, float r, int number) throws IOException {
        drawCircle(contentStream, x, y, r);
-        //drawBalloonText(contentStream,x,y,4);
-        drawBalloonText(contentStream, x, y, number);
+       drawBalloonText(contentStream, x, y, number);
     }
 
     private static void drawCircle(PDPageContentStream contentStream, float x, float y, float r) throws IOException {
@@ -117,18 +116,21 @@ class BalloonAnnotatorFixed {
         contentStream.setNonStrokingColor(1f); // white fill
         contentStream.setStrokingColor(0f);    // black stroke
         contentStream.fillAndStroke();
+
     }
 
     private static void drawBalloonText(PDPageContentStream contentStream, float x, float y, int number) throws IOException {
+        contentStream.setNonStrokingColor(0f, 0f, 0f); // Red in RGB
+        //contentStream.setNonStrokingColor(Color.RED);
         contentStream.beginText();
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 50);
+        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 12);
 
         String text = String.valueOf(number);
         float textWidth = 5 * text.length(); // Approximate width
         float textHeight = 10;
         contentStream.newLineAtOffset(x - textWidth / 2, y - textHeight / 4);
-        contentStream.setNonStrokingColor(0f, 0.f, 1f); // Green text
         contentStream.showText(text);
         contentStream.endText();
+
     }
 }

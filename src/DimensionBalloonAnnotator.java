@@ -94,7 +94,7 @@ public class DimensionBalloonAnnotator {
         float textHeight = 10;
 
         contentStream.newLineAtOffset(x - textWidth / 2, y - textHeight / 4);
-        contentStream.setNonStrokingColor(0f, 0.6f, 0f); // Green color
+        contentStream.setNonStrokingColor(0f, 0.0f, 0f); // Green color
         contentStream.showText(text);
         contentStream.endText();
     }
